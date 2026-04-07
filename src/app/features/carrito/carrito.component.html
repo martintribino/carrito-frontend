@@ -1,0 +1,102 @@
+<div class="carrito-page">
+
+  <!-- Crear carrito -->
+  @if (!carrito) {
+    <section class="card crear-section">
+      <h2>Crear Carrito</h2>
+      <div class="form-row">
+        <input
+          type="text"
+          [(ngModel)]="dni"
+          placeholder="DNI del usuario (ej: 30111222)"
+          (keyup.enter)="crearCarrito()"
+        />
+        <button (click)="crearCarrito()" [disabled]="loading || !dni.trim()">
+          {{ loading ? 'Creando...' : 'Crear Carrito' }}
+        </button>
+      </div>
+    </section>
+  }
+
+  @if (error) {
+    <div class="error-msg">{{ error }}</div>
+  }
+
+  <!-- Estado del carrito -->
+  @if (carrito) {
+    <section class="card carrito-estado">
+      <div class="carrito-header">
+        <div>
+          <h2>Carrito #{{ carrito.id }}</h2>
+          <p class="meta">
+            Cliente: <strong>{{ carrito.usuarioNombre }}</strong> ·
+            Tipo: <span class="badge" [class]="'badge-' + carrito.tipo">{{ tipoLabel(carrito.tipo) }}</span>
+          </p>
+        </div>
+        <div class="carrito-actions">
+          <button class="btn-secondary" (click)="consultarCarrito()">Refrescar</button>
+          <button class="btn-danger" (click)="eliminarCarrito()">Eliminar Carrito</button>
+        </div>
+      </div>
+
+      <!-- Items del carrito -->
+      <div class="items-section">
+        <h3>Items ({{ carrito.cantidadItems }})</h3>
+        @if (carrito.items.length === 0) {
+          <p class="empty">El carrito está vacío. Agregá productos desde el catálogo.</p>
+        } @else {
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th class="text-right">Precio</th>
+                <th class="text-center">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of carrito.items; track $index) {
+                <tr>
+                  <td>{{ item.productoNombre }}</td>
+                  <td class="text-right">{{ item.precioUnitario | number:'1.2-2' }}</td>
+                  <td class="text-center">
+                    <button class="btn-sm btn-danger" (click)="eliminarProducto(item.productoId)">Quitar</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+      <!-- Totales -->
+      <div class="totales">
+        <div class="total-row">
+          <span>Subtotal:</span>
+          <span>$ {{ carrito.subtotal | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row descuento">
+          <span>Descuento ({{ carrito.descripcionDescuento }}):</span>
+          <span>- $ {{ carrito.descuento | number:'1.2-2' }}</span>
+        </div>
+        <div class="total-row total-final">
+          <span>Total a pagar:</span>
+          <span>$ {{ carrito.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Catálogo de productos -->
+    <section class="card catalogo">
+      <h2>Catálogo de Productos</h2>
+      <div class="productos-grid">
+        @for (p of productos; track p.id) {
+          <div class="producto-card">
+            <span class="producto-nombre">{{ p.nombre }}</span>
+            <span class="producto-precio">$ {{ p.precio | number:'1.2-2' }}</span>
+            <button class="btn-sm" (click)="agregarProducto(p.id)">Agregar</button>
+          </div>
+        }
+      </div>
+    </section>
+  }
+</div>
