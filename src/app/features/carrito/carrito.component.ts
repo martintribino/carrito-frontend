@@ -1,63 +1,74 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CarritoService } from '../../core/services/carrito.service';
+import { CarritoStateService } from '../../core/services/carrito-state.service';
 import { CarritoResponse } from '../../core/models/carrito.models';
-
-const PRODUCTOS = [
-  { id: 1, nombre: 'Notebook Lenovo', precio: 850000 },
-  { id: 2, nombre: 'Mouse Logitech', precio: 15000 },
-  { id: 3, nombre: 'Teclado Mecánico', precio: 45000 },
-  { id: 4, nombre: 'Monitor 24"', precio: 320000 },
-  { id: 5, nombre: 'Auriculares Sony', precio: 75000 },
-  { id: 6, nombre: 'Webcam Full HD', precio: 38000 },
-  { id: 7, nombre: 'Hub USB', precio: 12000 },
-  { id: 8, nombre: 'Pad Mouse XL', precio: 8000 },
-  { id: 9, nombre: 'Cable HDMI 2m', precio: 5000 },
-  { id: 10, nombre: 'Silla Gamer', precio: 195000 },
-];
 
 @Component({
   selector: 'app-carrito',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
   templateUrl: './carrito.component.html',
   styleUrl: './carrito.component.scss'
 })
-export class CarritoComponent {
-  dni = '';
-  carrito: CarritoResponse | null = null;
-  productos = PRODUCTOS;
+export class CarritoComponent implements OnInit {
   error = '';
-  loading = false;
+  comprando = false;
+  compraExitosa = false;
+  productosStock: Map<number, number> = new Map();
 
-  constructor(private carritoService: CarritoService) {}
+  get carrito(): CarritoResponse | null { return this.state.carrito(); }
 
-  crearCarrito() {
-    if (!this.dni.trim()) return;
-    this.loading = true;
-    this.error = '';
-    this.carritoService.crearCarrito(this.dni.trim()).subscribe({
-      next: c => { this.carrito = c; this.loading = false; },
-      error: e => { this.error = e.error?.message || 'Error al crear carrito'; this.loading = false; }
+  constructor(
+    private carritoService: CarritoService,
+    private state: CarritoStateService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.cargarStock();
+  }
+
+  cargarStock() {
+    this.carritoService.listarProductos().subscribe({
+      next: productos => {
+        this.productosStock.clear();
+        productos.forEach(p => this.productosStock.set(p.id, p.stock));
+      }
     });
   }
 
-  agregarProducto(productoId: number) {
+  getStockDisponible(productoId: number): number {
+    return this.productosStock.get(productoId) ?? 0;
+  }
+
+  cambiarCantidad(productoId: number, nuevaCantidad: number) {
     if (!this.carrito) return;
     this.error = '';
-    this.carritoService.agregarProducto(this.carrito.id, productoId).subscribe({
-      next: c => this.carrito = c,
-      error: e => this.error = e.error?.message || 'Error al agregar producto'
-    });
+    if (nuevaCantidad <= 0) {
+      this.carritoService.eliminarProducto(this.carrito.id, productoId).subscribe({
+        next: c => { this.state.setCarrito(c); this.cargarStock(); this.checkVacio(c); },
+        error: e => this.error = e.error?.error || 'Error'
+      });
+    } else {
+      this.carritoService.actualizarCantidad(this.carrito.id, productoId, nuevaCantidad).subscribe({
+        next: c => { this.state.setCarrito(c); this.cargarStock(); },
+        error: e => this.error = e.error?.error || 'Error'
+      });
+    }
   }
 
   eliminarProducto(productoId: number) {
     if (!this.carrito) return;
     this.error = '';
     this.carritoService.eliminarProducto(this.carrito.id, productoId).subscribe({
-      next: c => this.carrito = c,
-      error: e => this.error = e.error?.message || 'Error al eliminar producto'
+      next: c => { this.state.setCarrito(c); this.cargarStock(); this.checkVacio(c); },
+      error: e => this.error = e.error?.error || 'Error al eliminar producto'
     });
   }
 
@@ -65,17 +76,35 @@ export class CarritoComponent {
     if (!this.carrito) return;
     this.error = '';
     this.carritoService.eliminarCarrito(this.carrito.id).subscribe({
-      next: () => this.carrito = null,
-      error: e => this.error = e.error?.message || 'Error al eliminar carrito'
+      next: () => { this.state.setCarrito(null); this.router.navigate(['/store']); },
+      error: e => this.error = e.error?.error || 'Error al eliminar carrito'
+    });
+  }
+
+  confirmarCompra() {
+    if (!this.carrito) return;
+    this.error = '';
+    this.comprando = true;
+    this.carritoService.confirmarCompra(this.carrito.id).subscribe({
+      next: () => {
+        this.comprando = false;
+        this.compraExitosa = true;
+        this.state.setCarrito(null);
+      },
+      error: e => { this.error = e.error?.error || 'Error al confirmar compra'; this.comprando = false; }
     });
   }
 
   consultarCarrito() {
     if (!this.carrito) return;
     this.carritoService.consultarCarrito(this.carrito.id).subscribe({
-      next: c => this.carrito = c,
-      error: e => this.error = e.error?.message || 'Error al consultar carrito'
+      next: c => { this.state.setCarrito(c); this.cargarStock(); },
+      error: e => this.error = e.error?.error || 'Error al consultar carrito'
     });
+  }
+
+  volverATienda() {
+    this.router.navigate(['/store']);
   }
 
   tipoLabel(tipo: string): string {
@@ -85,5 +114,9 @@ export class CarritoComponent {
       'PROMOCIONAL_VIP': 'Promocional VIP'
     };
     return map[tipo] || tipo;
+  }
+
+  private checkVacio(c: CarritoResponse) {
+    if (c.items.length === 0) this.router.navigate(['/store']);
   }
 }

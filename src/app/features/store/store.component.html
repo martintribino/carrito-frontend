@@ -1,0 +1,55 @@
+<div class="store-page">
+  <h2>🏪 Tienda</h2>
+
+  @if (mensaje) {
+    <div class="toast" [class.toast-error]="esError">{{ mensaje }}</div>
+  }
+
+  @if (!auth.isLoggedIn()) {
+    <p class="aviso"><a routerLink="/login">Iniciá sesión</a> para poder agregar productos al carrito.</p>
+  }
+
+  @if (loading) {
+    <div class="spinner-wrapper">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  } @else {
+    <div class="productos-grid">
+      @for (p of productosPaginados; track p.id) {
+        <mat-card [class.sin-stock]="p.stock === 0" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title>{{ p.nombre }}</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="producto-precio">$ {{ p.precio | number:'1.2-2' }}</p>
+            <p class="producto-stock" [class.stock-agotado]="p.stock === 0">
+              {{ p.stock > 0 ? 'Stock: ' + p.stock : 'Sin stock' }}
+            </p>
+          </mat-card-content>
+          <mat-card-actions>
+            @if (getCantidad(p.id) > 0) {
+              <div class="qty-controls">
+                <button mat-mini-fab color="primary" (click)="restar(p.id)" matTooltip="Quitar uno"><mat-icon>remove</mat-icon></button>
+                <span class="qty-value">{{ getCantidad(p.id) }}</span>
+                <button mat-mini-fab color="primary" (click)="agregar(p.id)" [disabled]="p.stock === 0" matTooltip="Agregar uno"><mat-icon>add</mat-icon></button>
+              </div>
+            } @else {
+              <button mat-flat-button color="primary" (click)="agregar(p.id)" [disabled]="!auth.isLoggedIn() || p.stock === 0">
+                {{ p.stock === 0 ? 'Agotado' : 'Agregar' }}
+              </button>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+
+    <mat-paginator
+      [length]="productos.length"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[5, 10, 25]"
+      (page)="onPage($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  }
+</div>

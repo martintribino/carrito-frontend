@@ -1,26 +1,20 @@
 <div class="reporte-page">
   <section class="card">
-    <h2>Reporte: Top 4 Productos Más Caros</h2>
-    <p class="subtitle">Consultá los 4 productos más caros del historial de compras de un cliente.</p>
-
-    <div class="form-row">
-      <input
-        type="text"
-        [(ngModel)]="dni"
-        placeholder="DNI del usuario (ej: 30111222)"
-        (keyup.enter)="buscar()"
-      />
-      <button (click)="buscar()" [disabled]="!dni.trim()">Buscar</button>
-    </div>
+    <h2>📊 Top 4 Productos Más Caros</h2>
+    <p class="subtitle">Tu historial de compras.</p>
 
     @if (error) {
       <div class="error-msg">{{ error }}</div>
     }
 
-    @if (buscado && !error) {
-      @if (productos.length === 0) {
-        <p class="empty">No se encontraron compras para este cliente.</p>
-      } @else {
+    @if (loading) {
+      <div class="spinner-wrapper">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    } @else if (productos.length === 0) {
+      <p class="empty">No se encontraron compras en tu historial.</p>
+    } @else {
+      <div class="table-wrapper">
         <table>
           <thead>
             <tr>
@@ -39,7 +33,7 @@
             }
           </tbody>
         </table>
-      }
+      </div>
     }
   </section>
 </div>

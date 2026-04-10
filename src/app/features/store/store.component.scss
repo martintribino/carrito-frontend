@@ -1,0 +1,90 @@
+.store-page {
+  max-width: 960px;
+  margin: 0 auto;
+  h2 { margin-bottom: 1rem; }
+}
+
+.aviso {
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.toast {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.toast-error {
+  background: #fef2f2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+mat-card {
+  display: flex;
+  flex-direction: column;
+
+  mat-card-actions {
+    margin-top: auto;
+    padding: 0.5rem 1rem 1rem;
+  }
+}
+
+.sin-stock { opacity: 0.6; }
+
+.producto-precio {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.producto-stock {
+  font-size: 0.8rem;
+  color: #059669;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.stock-agotado { color: #dc2626; }
+
+.qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.qty-value {
+  font-weight: 600;
+  font-size: 1.1rem;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .productos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(auto, 1fr));
+    gap: 0.75rem;
+  }
+}

@@ -1,59 +1,90 @@
-# CarritoFrontend
+# Carrito de Compras - Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.3.
+Frontend Angular 20 con Angular Material para la API REST de Carrito de Compras.
 
-## Development server
+## Requisitos
+- Node.js 18+
+- Angular CLI 20+
 
-To start a local development server, run:
+## Cómo levantar
 
 ```bash
+cd carrito-frontend
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+La app arranca en `http://localhost:4200`
 
-## Code scaffolding
+> El backend debe estar corriendo en `http://localhost:8080` (configurable en `src/environments/environment.ts`).
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
+## Funcionalidades
+
+### Autenticación
+- Login con DNI y contraseña
+- JWT almacenado en localStorage, enviado automáticamente via interceptor
+- Detección automática de token expirado (decodifica `exp` del JWT)
+- Interceptor captura respuestas 401/403 y redirige al login
+- Popover de usuario (hover) con info (nombre, DNI, si es VIP) y logout
+
+### Tienda (Store)
+- Lista de productos en Material Cards con precio y stock
+- Paginado con Material Paginator (default 10 productos, opciones 5/10/25)
+- Agregar productos al carrito (crea el carrito automáticamente si no existe)
+- Controles +/- (Material mini-fab buttons) para ajustar la cantidad
+- Botón deshabilitado cuando el producto no tiene stock disponible
+- Indicador visual de "Sin stock" / "Agotado"
+- Spinner de carga al iniciar
+
+### Carrito
+- Vista del carrito con items, precio unitario, cantidad, subtotal por item
+- Controles +/- (Material icon buttons) para ajustar cantidad
+- Eliminar items individuales o el carrito completo
+- Resumen con subtotal, descuento aplicado (con descripción) y total a pagar
+- Badge con tipo de carrito (Común, Fecha Especial, VIP)
+- Botón "Confirmar Compra" con spinner de procesamiento
+- Pantalla de compra exitosa con ícono y redirección a la tienda
+
+### Reporte
+- Top 4 productos más caros del historial de compras del usuario logueado
+- Spinner de carga
+
+### Control de stock
+- El stock se actualiza en tiempo real al agregar, quitar o modificar cantidades
+- Los botones de agregar se deshabilitan cuando no hay stock disponible
+- Al eliminar productos o el carrito, el stock se devuelve automáticamente
+
+### Navbar
+- Material Toolbar con navegación
+- Badge en el ícono de carrito con la cantidad total de productos
+- El ícono de carrito solo aparece si hay items
+
+---
+
+## Estructura del proyecto
+
+```
+src/app/
+├── core/
+│   ├── guards/          → authGuard, carritoGuard
+│   ├── interceptors/    → JWT auth interceptor (401/403 handling)
+│   ├── models/          → Interfaces TypeScript (CarritoResponse, ProductoResponse, etc.)
+│   └── services/        → CarritoService, CarritoStateService (signals), AuthService
+├── features/
+│   ├── carrito/         → Vista, gestión del carrito y confirmación de compra
+│   ├── login/           → Pantalla de login con Material form fields
+│   ├── reporte/         → Top 4 productos más caros
+│   └── store/           → Catálogo de productos con Material Cards y Paginator
+├── app.ts               → Componente raíz con Material Toolbar
+├── app.routes.ts        → Rutas con guards
+└── app.config.ts        → Providers (HTTP, router, interceptors, animations)
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Tecnologías
+- Angular 20 (standalone components, signals)
+- Angular Material 20 (toolbar, cards, buttons, badge, paginator, spinner, form fields)
+- RxJS
+- SCSS
+- TypeScript strict mode

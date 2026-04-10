@@ -1,31 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CarritoService } from '../../core/services/carrito.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ProductoResponse } from '../../core/models/carrito.models';
 
 @Component({
   selector: 'app-reporte',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, MatProgressSpinnerModule],
   templateUrl: './reporte.component.html',
   styleUrl: './reporte.component.scss'
 })
-export class ReporteComponent {
-  dni = '';
+export class ReporteComponent implements OnInit {
   productos: ProductoResponse[] = [];
-  buscado = false;
   error = '';
+  loading = true;
 
-  constructor(private carritoService: CarritoService) {}
+  constructor(private carritoService: CarritoService, private auth: AuthService) {}
 
-  buscar() {
-    if (!this.dni.trim()) return;
-    this.error = '';
-    this.buscado = false;
-    this.carritoService.top4ProductosMasCaros(this.dni.trim()).subscribe({
-      next: p => { this.productos = p; this.buscado = true; },
-      error: e => { this.error = e.error?.message || 'Error al buscar reporte'; this.buscado = true; }
+  ngOnInit() {
+    const dni = this.auth.user()?.dni;
+    if (!dni) return;
+    this.carritoService.top4ProductosMasCaros(dni).subscribe({
+      next: p => { this.productos = p; this.loading = false; },
+      error: e => { this.error = e.error?.error || 'Error al cargar reporte'; this.loading = false; }
     });
   }
 }

@@ -1,0 +1,33 @@
+<div class="login-page">
+  <div class="card login-card">
+    <h2>🔐 Iniciar Sesión</h2>
+
+    @if (error) {
+      <div class="error-msg">{{ error }}</div>
+    }
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>DNI</mat-label>
+      <input matInput [(ngModel)]="dni" placeholder="Ej: 30111222" (keyup.enter)="login()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput type="password" [(ngModel)]="password" placeholder="Contraseña" (keyup.enter)="login()" />
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" class="full-width" (click)="login()" [disabled]="loading || !dni.trim() || !password">
+      @if (loading) {
+        <mat-spinner diameter="20" class="inline-spinner"></mat-spinner>
+      } @else {
+        Ingresar
+      }
+    </button>
+
+    <div class="fecha-toggle" matTooltip="Simula si estamos en una fecha promocional. Afecta los carritos nuevos.">
+      <mat-slide-toggle [(ngModel)]="fechaPromocional" (change)="toggleFecha()">
+        Fecha especial
+      </mat-slide-toggle>
+    </div>
+  </div>
+</div>

@@ -4,6 +4,7 @@ export interface ItemResponse {
   productoId: number;
   productoNombre: string;
   precioUnitario: number;
+  cantidad: number;
 }
 
 export interface CarritoResponse {
@@ -23,4 +24,5 @@ export interface ProductoResponse {
   id: number;
   nombre: string;
   precio: number;
+  stock: number;
 }

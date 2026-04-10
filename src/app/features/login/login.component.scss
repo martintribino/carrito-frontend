@@ -1,0 +1,25 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 380px;
+
+  h2 { margin-bottom: 1.25rem; text-align: center; }
+}
+
+.full-width { width: 100%; }
+
+.inline-spinner { display: inline-block; }
+
+.fecha-toggle {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: center;
+}
