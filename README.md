@@ -3,15 +3,39 @@
 Frontend Angular 20 con Angular Material para la API REST de Carrito de Compras.
 
 ## Requisitos
-- Node.js 18+
-- Angular CLI 20+
+- Node.js v20.19+ o v22.12+
+- npm (viene con Node.js)
+
+> No es necesario instalar Angular CLI globalmente. El proyecto usa `npx` que ejecuta el CLI local incluido en las dependencias.
+
+### Instalación de requisitos
+
+**macOS (Homebrew):**
+```bash
+brew install node
+```
+
+**Ubuntu/Debian:**
+```bash
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+```
+
+**Windows:**
+1. Descargar e instalar [Node.js LTS](https://nodejs.org/) (incluye npm)
+
+**Verificar instalación:**
+```bash
+node -v    # debe ser v20.19+ o v22.12+
+npm -v     # debe ser 10+
+```
 
 ## Cómo levantar
 
 ```bash
 cd carrito-frontend
 npm install
-ng serve
+npx ng serve
 ```
 
 La app arranca en `http://localhost:4200`
