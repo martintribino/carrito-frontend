@@ -23,10 +23,12 @@ La app arranca en `http://localhost:4200`
 ## Funcionalidades
 
 ### Autenticación
-- Login con DNI y contraseña
+- Login con DNI y contraseña (Material form fields)
+- Toggle de "Fecha Especial" en el login para simular fecha promocional
 - JWT almacenado en localStorage, enviado automáticamente via interceptor
 - Detección automática de token expirado (decodifica `exp` del JWT)
 - Interceptor captura respuestas 401/403 y redirige al login
+- Al hacer login se recupera el carrito activo del usuario (si existe)
 - Popover de usuario (hover) con info (nombre, DNI, si es VIP) y logout
 
 ### Tienda (Store)
@@ -57,9 +59,11 @@ La app arranca en `http://localhost:4200`
 - Al eliminar productos o el carrito, el stock se devuelve automáticamente
 
 ### Navbar
-- Material Toolbar con navegación
 - Badge en el ícono de carrito con la cantidad total de productos
 - El ícono de carrito solo aparece si hay items
+- Indicador "Fecha Especial" cuando está activa la promoción
+- Menú hamburguesa con Sidenav en mobile/tablet (≤768px)
+- Vista responsive: desktop muestra nav-links + popover, mobile muestra sidenav
 
 ---
 
@@ -84,7 +88,7 @@ src/app/
 
 ## Tecnologías
 - Angular 20 (standalone components, signals)
-- Angular Material 20 (toolbar, cards, buttons, badge, paginator, spinner, form fields)
+- Angular Material 20 (toolbar, sidenav, cards, buttons, badge, paginator, spinner, form fields, slide-toggle, tooltips)
 - RxJS
 - SCSS
 - TypeScript strict mode

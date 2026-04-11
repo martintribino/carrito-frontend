@@ -6,7 +6,7 @@
 
   <span class="brand" routerLink="/store">Carrito de Compras</span>
 
-  @if (fechaPromocional) {
+  @if (state.fechaPromocional()) {
     <span class="fecha-badge" matTooltip="Los carritos nuevos de usuarios no-VIP tendrán promoción por fecha especial">
       🎉 Fecha Especial
     </span>

@@ -13,9 +13,7 @@ export class CarritoService {
   constructor(private http: HttpClient) {}
 
   crearCarrito(dni: string): Observable<CarritoResponse> {
-    return this.http.post<CarritoResponse>(`${this.baseUrl}/carritos`, null, {
-      params: new HttpParams().set('dni', dni)
-    });
+    return this.http.post<CarritoResponse>(`${this.baseUrl}/carritos`, { dni });
   }
 
   eliminarCarrito(carritoId: number): Observable<void> {
@@ -37,8 +35,7 @@ export class CarritoService {
   actualizarCantidad(carritoId: number, productoId: number, cantidad: number): Observable<CarritoResponse> {
     return this.http.put<CarritoResponse>(
       `${this.baseUrl}/carritos/${carritoId}/productos/${productoId}/cantidad`,
-      null,
-      { params: new HttpParams().set('cantidad', cantidad) }
+      { cantidad }
     );
   }
 
@@ -64,8 +61,8 @@ export class CarritoService {
 
   setFechaPromocional(valor: boolean): Observable<{ fechaPromocional: boolean }> {
     return this.http.put<{ fechaPromocional: boolean }>(
-      `${this.baseUrl}/config/fecha-promocional`, null,
-      { params: new HttpParams().set('valor', valor) }
+      `${this.baseUrl}/config/fecha-promocional`,
+      { fechaPromocional: valor }
     );
   }
 

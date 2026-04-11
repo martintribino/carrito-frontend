@@ -19,7 +19,6 @@ import { CarritoService } from './core/services/carrito.service';
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
-  fechaPromocional = false;
   menuAbierto = false;
 
   constructor(
@@ -31,7 +30,7 @@ export class App implements OnInit {
 
   ngOnInit() {
     this.carritoService.getFechaPromocional().subscribe({
-      next: res => this.fechaPromocional = res.fechaPromocional
+      next: res => this.state.setFechaPromocional(res.fechaPromocional)
     });
   }
 

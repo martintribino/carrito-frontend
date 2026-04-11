@@ -35,12 +35,17 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.carritoService.getFechaPromocional().subscribe({
-      next: res => this.fechaPromocional = res.fechaPromocional
+      next: res => {
+        this.fechaPromocional = res.fechaPromocional;
+        this.state.setFechaPromocional(res.fechaPromocional);
+      }
     });
   }
 
   toggleFecha() {
-    this.carritoService.setFechaPromocional(this.fechaPromocional).subscribe();
+    this.carritoService.setFechaPromocional(this.fechaPromocional).subscribe({
+      next: () => this.state.setFechaPromocional(this.fechaPromocional)
+    });
   }
 
   login() {
